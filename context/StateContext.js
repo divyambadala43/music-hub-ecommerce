@@ -22,6 +22,32 @@ export const StateContext = ({ children }) => {
     });
   };
 
+  const onAdd = (product, quantity) => {
+    const checkProductInCart = cartItems.find(
+      (item) => item._id === product._id
+    );
+
+    setTotalPrice(
+      (prevTotalPrice) => prevTotalPrice + product.price * quantity
+    );
+    setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + quantity);
+    if (checkProductInCart) {
+      const updatedCartItems = cartItems.map((cartProduct) => {
+        if (cartItems._id === product._id)
+          return {
+            ...cartItems,
+            quantity: cartItems.quantity + quantity,
+          };
+      });
+
+      setCartItems(updatedCartItems);
+    } else {
+      product.quantity = quantity;
+      setCartItems([...cartItems, { ...product }]);
+    }
+    toast.success(`${qty} ${product.name} added to the cart.`);
+  };
+
   return (
     <Context.Provider
       value={{
@@ -32,6 +58,7 @@ export const StateContext = ({ children }) => {
         qty,
         incQty,
         decQty,
+        onAdd,
       }}>
       {children}
     </Context.Provider>
